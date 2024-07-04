@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { get } from "http";
 
 const prisma = new PrismaClient();
 
@@ -43,4 +44,44 @@ async function updateUser(username: string, { firstName, lastName }: UpdateParam
 }
 
 updateUser("prath@gmail.com", { firstName: "rath", lastName: "singh" })
+
+async function getUser(username: string) {
+    const user = await prisma.users.findFirst({
+        where: {
+            username
+        }
+    })
+    console.log(user);
+}
+
+getUser("prath@gmail.com")
+
+async function insertTodos(userId: number) {
+    const response = await prisma.todos.create({
+        data: {
+            title: "Learning Prisma",
+            description: "Learning Prisma with Typescript",
+            userId: 1
+        }
+    })
+    console.log(response);
+}
+
+insertTodos(1);
+
+async function getTodosAndUsersDetails(userId: number) {
+    const response = await prisma.todos.findMany({
+        where: {
+            userId: userId
+        }, select: {
+            id: true,
+            title: true,
+            description: true
+        }
+    })
+    console.log(response);
+}
+
+getTodosAndUsersDetails(1);
+
 
